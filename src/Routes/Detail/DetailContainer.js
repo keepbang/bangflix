@@ -8,6 +8,10 @@ export default class extends React.Component{
         loading: true
     };
 
+    componentDidMount() {
+        
+    }
+
     render() {
         const {result, error,loading} = this.state;
         return (
