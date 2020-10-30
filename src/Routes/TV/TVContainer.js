@@ -4,7 +4,7 @@ import TVPresenter from "./TVPresenter";
 
 export default class extends React.Component{
     state = {
-        topRaged: null,
+        topRated: null,
         airingToday: null,
         popular: null,
         error: null,
@@ -33,10 +33,10 @@ export default class extends React.Component{
     }
 
     render() {
-        const {topRaged, airingToday, popular, error,loading} = this.state;
+        const {topRated, airingToday, popular, error,loading} = this.state;
         return (
             <TVPresenter
-                topRaged={topRaged}
+                topRated={topRated}
                 airingToday={airingToday}
                 popular={popular}
                 error={error}
