@@ -14,13 +14,17 @@ const Container = styled.div`
 const Form = styled.form`
     margin-bottom: 50px;
     width: 100%;
-    border-bottom: 1px solid #888888;
+    text-align: center;
 `;
 
 const Input = styled.input`
     all: unset; // box 없애기
     font-size: 28px;
-    width: 100%
+    width: 90%;
+    border: 1px solid #48C9B0;
+    color: #48C9B0;
+    border-radius: 20px;
+    padding: 5px 15px;
 `;
 
 const SearchPresenter = ({

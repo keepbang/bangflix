@@ -11,8 +11,4 @@
 
 ## Code Chanllenges
 
-- IMDB Link
-- Detail Page => Tabs inside of Movie/ Show Details (YouTube Videos[], Production Companys[] & Countries[S])
-- Collections Link
-- collections Route
-- On TV Show, show seasons and creators
+- credit 추가

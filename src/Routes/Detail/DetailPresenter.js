@@ -5,6 +5,8 @@ import Loader from 'Components/Loader';
 import { Helmet } from 'react-helmet';
 import flag from 'country-code-emoji';
 
+import imdbIcon from '../../image/imdbImg.png';
+
 const Container = styled.div`
     height: calc(100vh - 50px);
     width: 100%;
@@ -18,6 +20,7 @@ const Backdrop = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
+    min-height: 1080px;
     background-image: url(${props => props.bgImage});
     background-position: center center;
     background-size: cover;
@@ -41,11 +44,12 @@ const Cover = styled.div`
     background-size: cover;
     height: 100%;
     border-radius: 4px;
+    min-height: 960px;
 `;
 
 const Data = styled.div`
     width: 70%;
-    margin-left: 10px
+    margin-left: 10px;
 `;
 
 const Title = styled.div`
@@ -55,7 +59,7 @@ const Title = styled.div`
 `;
 
 const ItemContainer = styled.div`
-    margin: 20px 0;
+    margin: 20px 0 0 0;
 `;
 
 const Item = styled.span``;
@@ -102,11 +106,82 @@ const NonStar = styled.span`
 `;
 
 const Overview = styled.p`
-    font-size: 12px;
+    font-size: 13px;
     opacity: 0.7;
     line-height: 1.5;
-    width: 50%;
+    width: 100%;
 `;
+
+const ImdbImg = styled.img`
+    width: 25px;
+    height: 25px;
+    margin-bottom: -8px;
+`;
+
+const YtbContainer = styled.div`
+    background-color: rgba(33, 47, 60, 0.8);
+    width: fit-content;
+    max-width: 100%;
+    height: 270px;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+`;
+
+const Nodata = styled.div`
+    font-size: 20px;
+    height: 270px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const YoutubeBox = styled.iframe`
+    display: inline;
+    margin: 10px;
+`;
+
+const ProductCompany = styled.span`
+    background-image: url(${props => props.bgImage});
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 90%;
+    width: 400px;
+    display: inline-grid;
+    margin-right: 10px;
+    margin-top: 13px;
+    vertical-align: top;
+    :first-child{
+        margin-left: 10px;
+    }
+`;
+
+const NoLogoCompany = styled.span`
+    font-size: 30px;
+    display: grid;
+    justify-self: center;
+    align-self: center;
+`;
+
+
+const ProductCompanies = styled.div`
+    background-color: rgba(33, 47, 60, 0.8);
+    width: fit-content;
+    max-width: 100%;
+    height: 270px;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+`;
+
+const ItemTitle = styled.div`
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 600;
+`;
+
 
 const makeStar = (num) => {
     let result = [];
@@ -122,6 +197,7 @@ const makeStar = (num) => {
 }
 
 const HomePresenter = ({result, error,loading}) => (    
+    
     loading ? (
         <>
             <Helmet>
@@ -131,6 +207,7 @@ const HomePresenter = ({result, error,loading}) => (
         </>
     )
     :(
+
         <Container>
             <Helmet>
                 <title>{result.original_title? result.original_title : result.original_name} | Bangflix</title>
@@ -157,6 +234,10 @@ const HomePresenter = ({result, error,loading}) => (
                             ? result.runtime
                             : result.episode_run_time[0]} min
                         </Item>
+                        <Divider>|</Divider>
+                            <a href={result.imdb_id ? `https://www.imdb.com/title/${result.imdb_id}` : "#"} target="_blank" rel="noopener noreferrer">
+                                <ImdbImg src={imdbIcon} alt="imdbImage"/>
+                            </a>
                         <Divider>|</Divider>
                         <Item>
                             {
@@ -185,10 +266,36 @@ const HomePresenter = ({result, error,loading}) => (
                         </Item>
                         
                     </ItemContainer>
+                    <ItemTitle>Overview</ItemTitle>
                     <Overview>
                         {result.overview}
                     </Overview>
-
+                    <ItemTitle>Videos</ItemTitle>
+                    <YtbContainer>
+                        {
+                            result.videos.results.length === 0 ?
+                            <Nodata>No Videos</Nodata> : (
+                                result.videos.results.map((video) => 
+                                    <YoutubeBox width="460" height="250" src={`https://www.youtube.com/embed/${video.key}`}/>
+                                )   
+                            )
+                        }
+                    </YtbContainer>
+                    <ItemTitle>Production Companies</ItemTitle>
+                    <ProductCompanies>
+                        {
+                            result.production_companies === 0 ?
+                            <Nodata>No Production Companies</Nodata> : 
+                            (
+                                result.production_companies.map((company) => (
+                                        company.logo_path ?
+                                        <ProductCompany bgImage={company.logo_path?`https://image.tmdb.org/t/p/original${company.logo_path}`:""}/> :
+                                        <ProductCompany><NoLogoCompany>{company.name}</NoLogoCompany></ProductCompany>
+                                    )
+                                )
+                            )
+                        }
+                    </ProductCompanies>
                 </Data>
             </Content>
         </Container>
