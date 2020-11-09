@@ -44,10 +44,10 @@ export default withRouter(({location: {pathname}}) => (
     <Header>
         <LogoImg height="50" src={logo} alt="Bangflix"/>
         <List>
-            <Item current={pathname === "/"}>
+            <Item current={pathname === "/" || pathname.includes("movie")}>
                 <SLink to="/">Movies</SLink>
             </Item>
-            <Item current={pathname === "/tv"}>
+            <Item current={pathname.includes("/tv") || pathname.includes("/show") || pathname.includes("/seasons")}>
                 <SLink to="/tv">TV</SLink>
             </Item>
             <Item current={pathname === "/search"}>

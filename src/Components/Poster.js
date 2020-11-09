@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
+import logo from '../image/logo.png';
 
 const Container = styled.div`
     font-size: 12px;
@@ -51,11 +52,27 @@ const Year = styled.span`
     color: rgba(255,255,255, 0.5);
 `;
 
+const NonPoster = styled.div`
+    background-image: url(${logo});
+    height: 180px;
+    background-size: cover;
+    border-radius: 4px;
+    background-position: center center;
+    transition: opacity 0.1s linear;
+    box-shadow: 0px 0px 5px 0px #000;
+    background-color: #fff;
+`;
+
 const Poster = ({id, imageUrl, title, rating, year, isMovie = false}) => (
     <Link to={isMovie? `/movie/${id}` : `/show/${id}`}>
         <Container>
             <ImageContainer>
-                <Image bgUrl={imageUrl ? `https://image.tmdb.org/t/p/w300${imageUrl}`: require("../image/NonImg.png")}/>
+                {
+                    imageUrl ?
+                    <Image bgUrl={`https://image.tmdb.org/t/p/w300${imageUrl}`}/> :
+                    <NonPoster/>
+                }
+                
                 <Rating>
                     <span role="img" aria-label="rating">
                         ⭐️

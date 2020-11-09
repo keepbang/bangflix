@@ -6,6 +6,9 @@ import { Helmet } from 'react-helmet';
 import flag from 'country-code-emoji';
 
 import imdbIcon from '../../image/imdbImg.png';
+import { Link } from 'react-router-dom';
+import logo from 'image/logo.png';
+
 
 const Container = styled.div`
     height: calc(100vh - 50px);
@@ -47,6 +50,18 @@ const Cover = styled.div`
     min-height: 960px;
 `;
 
+const NonCover = styled.div`
+    width: 30%;
+    background-image: url(${logo});
+    background-position: center center;
+    background-size: contain;
+    height: 100%;
+    border-radius: 4px;
+    min-height: 960px;
+    background-color: #fff;
+    background-repeat: no-repeat;
+`;
+
 const Data = styled.div`
     width: 70%;
     margin-left: 10px;
@@ -77,9 +92,9 @@ const Divider = styled.span`
 
 const VoteAverage = styled.span`
     display: none;
-    position: relative;
-    top: -7px;
-    left: 10px;
+    position: absolute;
+    top: -20px;
+    right: -10px;
     background-color: rgba(28, 40, 51);
     padding: 3px 5px;
     border-radius: 5px;
@@ -88,6 +103,7 @@ const VoteAverage = styled.span`
 
 const StarContainer = styled.span`
     cursor: default;
+    position: relative;
     &:hover{
         ${VoteAverage}{
             display: inline;
@@ -126,6 +142,7 @@ const YtbContainer = styled.div`
     white-space: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
+    min-width: 460px;
 `;
 
 const Nodata = styled.div`
@@ -167,6 +184,7 @@ const NoLogoCompany = styled.span`
 
 const ProductCompanies = styled.div`
     background-color: rgba(33, 47, 60, 0.8);
+    min-width: 460px;
     width: fit-content;
     max-width: 100%;
     height: 270px;
@@ -183,6 +201,19 @@ const ItemTitle = styled.div`
 `;
 
 
+const SeasonBtn = styled.span`
+    padding: 2px 10px;
+    font-size: 13px;
+    background-color: #82E0AA;
+    color: #34495E;
+    border-radius: 10px;
+
+    &:hover{
+        color: #ECF0F1;
+    }
+`;
+
+
 const makeStar = (num) => {
     let result = [];
     for(let i = 0;i<5;i++){
@@ -196,7 +227,7 @@ const makeStar = (num) => {
     return result;
 }
 
-const HomePresenter = ({result, error,loading}) => (    
+const HomePresenter = ({result, error,loading, isMovie}) => (    
     
     loading ? (
         <>
@@ -214,13 +245,13 @@ const HomePresenter = ({result, error,loading}) => (
             </Helmet>
             <Backdrop bgImage={result.backdrop_path?`https://image.tmdb.org/t/p/original${result.backdrop_path}`:""}/>
             <Content>
-                <Cover bgImage={
-                    result.poster_path
-                    ? `https://image.tmdb.org/t/p/original${result.poster_path}`
-                    : require("../../image/NonImg.png")
-                }/>
+                
+                {
+                    result.poster_path ? (
+                        <Cover bgImage={`https://image.tmdb.org/t/p/original${result.poster_path}`}/> ):
+                        <NonCover/>
+                }
                 <Data>
-                    {console.log(result)}
                     <Title>{result.original_title? result.original_title : result.original_name}</Title>
                     <ItemContainer>
                         <Item>
@@ -264,7 +295,25 @@ const HomePresenter = ({result, error,loading}) => (
                                 <VoteAverage>{result.vote_average}/10</VoteAverage>
                             </StarContainer>
                         </Item>
-                        
+                        {
+                            !isMovie ? (
+                                    <>
+                                        <Divider>|</Divider>
+                                        <SeasonBtn>
+                                            {console.log(result.seasons)}
+                                            <Link to={{
+                                                pathname:`/seasons/${result.id}`,
+                                                state:{
+                                                    seasons : result.seasons ,
+                                                    name: result.original_name
+                                                }
+                                            }}>Seasons →</Link>
+                                        </SeasonBtn>
+                                    </>
+                                ):
+                                ""
+                            
+                        }
                     </ItemContainer>
                     <ItemTitle>Overview</ItemTitle>
                     <Overview>
@@ -284,7 +333,7 @@ const HomePresenter = ({result, error,loading}) => (
                     <ItemTitle>Production Companies</ItemTitle>
                     <ProductCompanies>
                         {
-                            result.production_companies === 0 ?
+                            result.production_companies.length === 0 ?
                             <Nodata>No Production Companies</Nodata> : 
                             (
                                 result.production_companies.map((company) => (
