@@ -8,9 +8,23 @@ const Container = styled.div`
     }
 `;
 
-const Title = styled.span`
-    font-size: 14px;
+const Title = styled.div`
+    font-size: 20px;
     font-weight: 600;
+    text-align: center;
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    margin: 8px 0px;
+    ::after,::before{
+        content: "";
+        flex-grow: 1;
+        background: rgba(255, 255, 255, 0.35);
+        height: 1px;
+        font-size: 0px;
+        line-height: 0px;
+        margin: 0px 16px;
+    }
 `;
 
 const Grid = styled.div`
