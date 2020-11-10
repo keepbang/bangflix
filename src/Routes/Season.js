@@ -6,6 +6,7 @@ import logo from 'image/logo.png';
 import Loader from 'Components/Loader';
 import Message from 'Components/Message'
 import backImg from 'image/back.png';
+import MoveTop from "Components/MoveTop";
 
 const Container = styled.div`
     height: calc(100vh - 50px);
@@ -165,8 +166,6 @@ export const Season = withRouter(({history ,match: {params: {id,number}}}) => {
         try {
             
             const {data:result} = await tvApi.season(id,number);
-
-            console.log(result);
             
             setSeason(result);
         } catch {
@@ -244,6 +243,7 @@ export const Season = withRouter(({history ,match: {params: {id,number}}}) => {
                 </Data>
             </Content>
             {error && <Message color="#e74c3c" text={error}/>}
+            <MoveTop/>
         </Container>
         )
     )

@@ -3,6 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from 'image/logo.png';
 import backImg from 'image/back.png';
+import MoveTop from "Components/MoveTop";
 
 const Container = styled.div`
     height: calc(100vh - 50px);
@@ -141,6 +142,7 @@ export const Seasons = withRouter(({history ,location: {state : {seasons,name}},
                     ))
                 }
             </SeasonContainer>
+            <MoveTop/>
         </Container>
     );
 });

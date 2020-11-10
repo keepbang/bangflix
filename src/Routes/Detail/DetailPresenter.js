@@ -11,6 +11,9 @@ import logo from 'image/logo.png';
 
 import backImg from 'image/back.png';
 
+import MoveTop from "Components/MoveTop";
+import { Credits } from '../Credits';
+
 const Container = styled.div`
     height: calc(100vh - 50px);
     width: 100%;
@@ -24,7 +27,7 @@ const Backdrop = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    min-height: 1080px;
+    min-height: 1280px;
     background-image: url(${props => props.bgImage});
     background-position: center center;
     background-size: cover;
@@ -300,19 +303,20 @@ const DetailPresenter = withRouter(({result, error,loading, isMovie, history}) =
                             }
                         </Item>
                         <Divider>|</Divider>
+                            {console.log(result)}
                             <Item>
                                 {
                                     result.origin_country?
-                                    result.origin_country.map((country) => <Country>{flag(country)}</Country>):
-                                    result.production_countries.map((obj) => <Country>{flag(obj.iso_3166_1)}</Country>)
+                                    result.origin_country.map((country,i) => <Country key={i}>{flag(country)}</Country>):
+                                    result.production_countries.map((obj,i) => <Country key={i}>{flag(obj.iso_3166_1)}</Country>)
                                 }
                             </Item>
                         <Divider>|</Divider>
                         <Item>
                             <StarContainer>
                                 {
-                                    makeStar(Math.round(result.vote_average/2)).map((star) => 
-                                            star ? <Star>★</Star> : <NonStar>★</NonStar>
+                                    makeStar(Math.round(result.vote_average/2)).map((star,i) => 
+                                            star ? <Star key={i}>★</Star> : <NonStar key={i}>★</NonStar>
                                     )
                                 }
                                 <VoteAverage>{result.vote_average}/10</VoteAverage>
@@ -323,7 +327,6 @@ const DetailPresenter = withRouter(({result, error,loading, isMovie, history}) =
                                     <>
                                         <Divider>|</Divider>
                                         <SeasonBtn>
-                                            {console.log(result.seasons)}
                                             <Link to={{
                                                 pathname:`/seasons/${result.id}`,
                                                 state:{
@@ -348,7 +351,7 @@ const DetailPresenter = withRouter(({result, error,loading, isMovie, history}) =
                             result.videos.results.length === 0 ?
                             <Nodata>No Videos</Nodata> : (
                                 result.videos.results.map((video) => 
-                                    <YoutubeBox width="460" height="250" src={`https://www.youtube.com/embed/${video.key}`}/>
+                                    <YoutubeBox key={video.id} width="460" height="250" src={`https://www.youtube.com/embed/${video.key}`}/>
                                 )   
                             )
                         }
@@ -361,15 +364,18 @@ const DetailPresenter = withRouter(({result, error,loading, isMovie, history}) =
                             (
                                 result.production_companies.map((company) => (
                                         company.logo_path ?
-                                        <ProductCompany bgImage={company.logo_path?`https://image.tmdb.org/t/p/original${company.logo_path}`:""}/> :
-                                        <ProductCompany><NoLogoCompany>{company.name}</NoLogoCompany></ProductCompany>
+                                        <ProductCompany key={company.id} bgImage={company.logo_path?`https://image.tmdb.org/t/p/original${company.logo_path}`:""}/> :
+                                        <ProductCompany key={company.id}><NoLogoCompany>{company.name}</NoLogoCompany></ProductCompany>
                                     )
                                 )
                             )
                         }
                     </ProductCompanies>
+                    <ItemTitle>Casts</ItemTitle>
+                    <Credits isMovie={isMovie} id={result.id}/>
                 </Data>
             </Content>
+            <MoveTop/> 
         </Container>
     ))
 });

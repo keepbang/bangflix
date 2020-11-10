@@ -6,6 +6,7 @@ import Section from 'Components/Section';
 import Message from 'Components/Message';
 import Poster from 'Components/Poster';
 import { Helmet } from 'react-helmet';
+import MoveTop from "Components/MoveTop";
 
 const Container = styled.div`
     padding: 20px;
@@ -80,6 +81,7 @@ const SearchPresenter = ({
                     }
                 </>
             )}
+            <MoveTop/>
         </Container>
     );
 

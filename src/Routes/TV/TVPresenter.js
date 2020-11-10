@@ -6,6 +6,7 @@ import Loader from 'Components/Loader';
 import Message from 'Components/Message';
 import Poster from 'Components/Poster';
 import { Helmet } from 'react-helmet';
+import MoveTop from "Components/MoveTop";
 
 const Container = styled.div`
     padding: 20px;
@@ -60,6 +61,7 @@ const TVPresenter = ({topRated, airingToday, popular, error,loading}) => (
                 }</Section>
             )}
             {error && <Message color="#e74c3c" text={error}/>}
+            <MoveTop/>
         </Container>
         )}
 </>
