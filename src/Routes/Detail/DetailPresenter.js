@@ -6,15 +6,16 @@ import { Helmet } from 'react-helmet';
 import flag from 'country-code-emoji';
 
 import imdbIcon from '../../image/imdbImg.png';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import logo from 'image/logo.png';
 
+import backImg from 'image/back.png';
 
 const Container = styled.div`
     height: calc(100vh - 50px);
     width: 100%;
     position: relative;
-    padding: 50px;
+    padding: 20px 50px;
 `;
 
 const Backdrop = styled.div`
@@ -29,7 +30,7 @@ const Backdrop = styled.div`
     background-size: cover;
     filter: blur(3px);
     opacity: 0.5;
-    z-index: 0;
+    z-index: -1;
 `;
 
 const Content = styled.div`
@@ -213,23 +214,44 @@ const SeasonBtn = styled.span`
     }
 `;
 
-
-const makeStar = (num) => {
-    let result = [];
-    for(let i = 0;i<5;i++){
-        if(num > 0){
-            result.push(true);
-            num--;
-        }else{
-            result.push(false);
-        }
+const BackBtn = styled.div`
+    background-image: url(${backImg});
+    background-position: center center;
+    background-size: contain;
+    width: 50px;
+    height: 40px;
+    margin-bottom: 20px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: rgba(93, 109, 126,0.5);
+    border-radius: 5px;
+    &:hover{
+        background-color: rgba(255, 255, 255,0.5);
     }
-    return result;
-}
+`;
 
-const HomePresenter = ({result, error,loading, isMovie}) => (    
+
+
+const DetailPresenter = withRouter(({result, error,loading, isMovie, history}) => { 
     
-    loading ? (
+    const onPushBack = () => {
+        history.goBack(1);
+    }
+
+    const makeStar = (num) => {
+        let result = [];
+        for(let i = 0;i<5;i++){
+            if(num > 0){
+                result.push(true);
+                num--;
+            }else{
+                result.push(false);
+            }
+        }
+        return result;
+    }
+
+    return (loading ? (
         <>
             <Helmet>
                 <title>Loading | Bangflix</title>
@@ -244,8 +266,9 @@ const HomePresenter = ({result, error,loading, isMovie}) => (
                 <title>{result.original_title? result.original_title : result.original_name} | Bangflix</title>
             </Helmet>
             <Backdrop bgImage={result.backdrop_path?`https://image.tmdb.org/t/p/original${result.backdrop_path}`:""}/>
+            <BackBtn onClick={onPushBack}/>    
+            
             <Content>
-                
                 {
                     result.poster_path ? (
                         <Cover bgImage={`https://image.tmdb.org/t/p/original${result.poster_path}`}/> ):
@@ -348,13 +371,15 @@ const HomePresenter = ({result, error,loading, isMovie}) => (
                 </Data>
             </Content>
         </Container>
-    )
-);
+    ))
+});
 
-HomePresenter.propTypes = {
+DetailPresenter.propTypes = {
     result: PropTypes.object,
     error: PropTypes.string,
-    loading: PropTypes.bool.isRequired
+    loading: PropTypes.bool.isRequired,
+    isMovie: PropTypes.bool.isRequired,
+    history: PropTypes.object
 }
 
-export default HomePresenter;
+export default DetailPresenter;

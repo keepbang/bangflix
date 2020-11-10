@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { tvApi } from '../api';
 import logo from 'image/logo.png';
-import Loader from '../Components/Loader';
+import Loader from 'Components/Loader';
+import Message from 'Components/Message'
+import backImg from 'image/back.png';
 
 const Container = styled.div`
     height: calc(100vh - 50px);
     width: 100%;
     position: relative;
-    padding: 50px;
+    padding: 20px 50px;
 `;
 
 const Cover = styled.div`
@@ -48,7 +50,7 @@ const Data = styled.div`
 `;
 
 const Title = styled.div`
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 600;
     margin-bottom: 10px;
 `;
@@ -59,13 +61,107 @@ const AirDate = styled.div`
     margin-bottom: 10px;
 `;
 
-export const Season = withRouter(({match: {params: {id,number}}}) => {
+const BackBtn = styled.div`
+    background-image: url(${backImg});
+    background-position: center center;
+    background-size: contain;
+    width: 50px;
+    height: 40px;
+    margin-bottom: 20px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: rgba(93, 109, 126,0.5);
+    border-radius: 5px;
+    &:hover{
+        background-color: rgba(255, 255, 255,0.5);
+    }
+`;
+
+const Episodes = styled.div`
+    width: 100%;
+    height: 800px;
+    margin : 20px 0;
+    padding: 10px;
+    background-color: rgba(93, 109, 126,0.5);
+    overflow-x : hidden;
+    overflow-y : auto;
+`;
+
+const Episode = styled.div`
+    display: flex;
+    background-color: rgba(33, 47, 61,0.8);
+    :not(:last-child){
+        margin-bottom: 10px;
+    }
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #000;
+`;
+
+const Info = styled.div`
+    padding: 10px;
+    width: 100%;
+`;
+
+const EpName = styled.span`
+    font-size: 25px;
+`;
+
+const EpAirDate = styled.div`
+    opacity: 0.6;
+    vertical-align: bottom;
+    margin-bottom: 5px;
+    margin-top: 5px;
+`;
+
+const EpVote = styled.span`
+    float: right;
+`;
+
+const EpOverview = styled.p`
+    line-height: 1.5;
+`;
+
+const EpStill = styled.div`
+    background-image: url(${props => props.bgUrl});
+    height: 158px;
+    border-radius: 4px;
+    background-position: center center;
+    transition: opacity 0.1s linear;
+    box-shadow: 0px 0px 5px 0px #000;
+    width: 265px;
+    background-repeat: no-repeat;
+    margin : 10px;
+`; 
+
+const NonStill = styled.div`
+    width: 265px;
+    background-image: url(${logo});
+    height: 158px;
+    background-size: contain;
+    border-radius: 4px;
+    background-position: center center;
+    transition: opacity 0.1s linear;
+    box-shadow: 0px 0px 5px 0px #000;
+    background-color: #fff;
+    background-repeat: no-repeat;
+`;
+
+const Star = styled.span`
+    font-size: 14px;
+    color: #F4D03F;
+`;
+
+const NonStar = styled.span`
+    font-size: 14px;
+    color: #B2BABB;
+`;
+
+export const Season = withRouter(({history ,match: {params: {id,number}}}) => {
     const [season,setSeason] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
-
-    const getSeason = async () => {
+    const getSeason = useCallback( async () => {
         try {
             
             const {data:result} = await tvApi.season(id,number);
@@ -78,16 +174,34 @@ export const Season = withRouter(({match: {params: {id,number}}}) => {
         } finally {
             setLoading(false);
         }
-    }
+    },[id,number])
 
     useEffect(() => {
         getSeason();
-    }, [loading])
+    }, [getSeason,loading]);
     
+    const onPushBack = () => {
+        history.goBack(1);
+    }
+
+    const makeStar = (num) => {
+        let result = [];
+        for(let i = 0;i<5;i++){
+            if(num > 0){
+                result.push(true);
+                num--;
+            }else{
+                result.push(false);
+            }
+        }
+        return result;
+    }
+
     return (
         loading ?
         <Loader/> :(
         <Container>
+            <BackBtn onClick={onPushBack}/>
             <Content>
                 {
                     season.poster_path ? 
@@ -98,8 +212,38 @@ export const Season = withRouter(({match: {params: {id,number}}}) => {
                 <Data>
                     <Title>{season.name}</Title>
                     <AirDate>{season.air_date}</AirDate>
+                    <Episodes>
+                        {
+                            season.episodes.length !== 0
+                            ? season.episodes.map((ep) => 
+                                <Episode key={ep.id}>
+                                    {
+                                        ep.still_path ?
+                                        <EpStill bgUrl={`https://image.tmdb.org/t/p/w300/${ep.still_path}`}/> :
+                                        <NonStill/>
+                                    }
+                                    <Info>
+                                        <EpName>{ep.name}</EpName>
+                                        <EpVote>
+                                        {
+                                            makeStar(Math.round(ep.vote_average/2)).map((star) => 
+                                                    star ? <Star>★</Star> : <NonStar>★</NonStar>
+                                            )
+                                        }
+                                        </EpVote>
+                                        <EpAirDate>{ep.air_date}</EpAirDate>
+                                        <EpOverview>
+                                            {ep.overview}
+                                        </EpOverview>
+                                    </Info>
+                                </Episode>
+                            )
+                            : "No Episodes"
+                        }
+                    </Episodes>
                 </Data>
             </Content>
+            {error && <Message color="#e74c3c" text={error}/>}
         </Container>
         )
     )

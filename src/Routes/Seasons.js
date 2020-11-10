@@ -1,17 +1,17 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import logo from '../image/logo.png';
+import logo from 'image/logo.png';
+import backImg from 'image/back.png';
 
 const Container = styled.div`
     height: calc(100vh - 50px);
     width: 100%;
     position: relative;
-    padding: 50px;
+    padding: 20px 50px;
 `;
 
 const Title = styled.div`
-    cursor: pointer;
     padding: 7px 10px;
     font-size: 32px;
     font-weight: 600;
@@ -20,10 +20,6 @@ const Title = styled.div`
     color: #34495E;
     border-radius: 4px;
     display: inline-block;
-
-    &:hover{
-        color: #ECF0F1;
-    };
 `;
 
 const SeasonContainer = styled.div`
@@ -94,15 +90,32 @@ const SLink = styled(Link)`
     display: grid;
 `;
 
+const BackBtn = styled.div`
+    background-image: url(${backImg});
+    background-position: center center;
+    background-size: contain;
+    width: 50px;
+    height: 40px;
+    margin-bottom: 20px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: rgba(93, 109, 126,0.5);
+    border-radius: 5px;
+    &:hover{
+        background-color: rgba(255, 255, 255,0.5);
+    }
+`;
+
 export const Seasons = withRouter(({history ,location: {state : {seasons,name}}, match: {params: {id}} }) => {
 
-    const onClickTitle = () => {
+    const onPushBack = () => {
         history.goBack(1);
     }
 
     return (
         <Container>
-            <Title onClick={onClickTitle}>
+            <BackBtn onClick={onPushBack}/>
+            <Title>
                 {name}
             </Title>
             <SeasonContainer>
